@@ -1,0 +1,17 @@
+{
+  "author": "Chris Holden <christopherholden@hotmail.com>",
+  "name": "SoundBoard",
+  "description": "Simple sound server.",
+  "version": "0.0.1",
+  "repository": {
+    "url": ""
+  },
+  "dependencies": {
+    "express": "*"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
