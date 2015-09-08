@@ -34,14 +34,15 @@ function addFile (filePath) {
 	    var nameEnd = fileName.indexOf('.');
 	    var key;     
 	    if (nameEnd != -1) {
-		key = fileName.substring(0, nameEnd);
-		var lastDot = fileName.lastIndexOf('.');
-		var tags = parseTags(fileName.substring(nameEnd+1, lastDot));
-		var soundType = findOrCreate(key);
-		console.log('Adding key ['+key+']');
-		console.log('Tags ['+tags+']');
-		addAll(soundType.tags, tags);
-                addIfNotPresent(soundType.files, filePath);		
+		    key = fileName.substring(0, nameEnd);
+		    var lastDot = fileName.lastIndexOf('.');
+		    var tags = parseTags(fileName.substring(nameEnd+1, lastDot));
+		    var soundType = findOrCreate(key);
+		    console.log('Adding key ['+key+']');
+		    console.log('Tags ['+tags+']');
+            addAll(soundType.tags, tags);
+            var fileInfo = {'filePath': filePath, 'tags': tags};
+            soundType.files.push(fileInfo);
 	    }
      }
 }
@@ -73,14 +74,39 @@ function addIfNotPresent (array, item) {
 }
 
 function getFile (keyAndTags) {
-    console.log('looking for ' + keyAndTags);
     var key = keyAndTags;
+    var tags;
+    var split = keyAndTags.indexOf('.');
+    if (split == -1) {
+        key = keyAndTags;
+    } else {
+        key = keyAndTags.substring(0,split);
+        tags = parseTags(keyAndTags.substring(split+1));
+    }
+
     var cleanKey = key.toLowerCase();
     var item = registry[cleanKey];
     var result = null;
     if (item) {
-    	var fileCount = item.files.length;
-	result = item.files[randomBetweenOneAnd(fileCount)-1];
+        var selection;
+        if (tags && tags.length > 0) {
+            selection = item.files.filter(function (item) {
+                var matchedTags = 0;
+                tags.forEach(function (tag) {
+                    if (item.tags.indexOf(tag) != -1) {
+                      matchedTags++;
+                    };
+                });
+                return matchedTags == tags.length;
+            });
+        } else {
+            selection = item.files;
+        }
+    	var fileCount = selection.length;
+        if (fileCount > 0) {
+            result = selection[randomBetweenOneAnd(fileCount)-1];
+            result = result.filePath;
+        }
     }
     return result;
 }

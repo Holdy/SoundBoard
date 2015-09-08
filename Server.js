@@ -5,7 +5,13 @@ var player = require('./Player.js');
 
 function start (port, directory) {
 
-	fileLoader.loadFiles(directory);
+	if (directory instanceof Array) {
+		directory.forEach(function (item) {
+			fileLoader.loadFiles(item);
+		});
+	} else {
+		fileLoader.loadFiles(directory);
+	}
 
 	http.createServer(function (req, res) {
 	  res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -17,12 +23,32 @@ function start (port, directory) {
 		  	
 	      player.process(command);
 	   }
-	}).listen(port, '127.0.0.1');
+	}).listen(port);
 
 	console.log('Server running on port :' + port);
+	player.process('1212');
 }
 
+/*
+function parseContexts(text) {
+	var context = {};
+	var items = text.toLowerCase().split('/');
+	items.forEach(function (item){
+		if (item.startsWith('vol')) {
+			context.volume = getFirstNumber(item);
+		}
+	});
+}
 
-
+const numbers = '0123456789';
+function getFirstNumber(text) {
+	var number = null;
+	if (text) {
+		var matches = text.match(/\d+/);
+		number = matches.length > 0 ? matches[0] : null;
+	}
+	return number;
+}
+*/
 
 module.exports.start = start;

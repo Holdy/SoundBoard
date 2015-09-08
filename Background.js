@@ -6,10 +6,12 @@ function addIntermittent (soundKey, config) {
 }
 
 function channel (soundName,min,max) {
-    var range = max - min;
+    var minMS = min * 1000;
+    var maxMS = max * 1000;
+    var range = maxMS - minMS;
     runChannel(soundName, function () {
         var pause = randomBetweenOneAnd(range);
-        return (pause + min) * 1000;
+        return (pause + minMS);
     });
 }
 
@@ -26,27 +28,38 @@ function randomBetweenOneAnd(x) {
 
 function addTimed (soundKey, config) {
     var rule = new schedule.RecurrenceRule();
-    rule.minute = config.minute || null;
+    rule.minute = config.minute;
     var j = schedule.scheduleJob(rule, function(){
         if ( config.clock ) {
-            playOnceForEachHour(soundkey);
+            playOnceForEachHour(soundKey, config.interval);
         } else {
             player.process(soundKey);
         }
     });
 }
 
-function playOnceForEachHour(soundKey) {
+function playOnceForEachHour(soundKey, interval) {
     var d = new Date();
     var n = d.getHours();
     if (n > 12) {
         n -= 12;
     }
-    var command = '';
-    for (i=0; i < n; i++) {
-        command = command + soundKey + ',';
+
+    if (interval) {
+        var intervalMS = interval * 1000;
+        var timeout = 0;
+        for (i = 0; i < n; i++) {
+            setTimeout(function (){player.process(soundKey)}, timeout);
+            timeout += intervalMS;
+        }
+
+    } else {
+        var command = '';
+        for (i = 0; i < n; i++) {
+            command = command + soundKey + ',';
+        }
+        player.process(command);
     }
-    player.process(command);
 }
 
 module.exports.addIntermittent = addIntermittent;

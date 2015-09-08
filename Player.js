@@ -4,6 +4,13 @@ var soundType = require('./SoundType.js');
 
 var playFunction;
 
+var defaultContext = {volume: 100};
+var soundKeyToContextMap =  {
+    Blackbird: {volume: 50},
+    1212: {volume:100}
+
+};
+
 // Space + & all mean play at the same time.
 // 'wait' means wait 1 second. Comma = play after (eg 'intro,name,name-theme').
 function processCommands (command) {
@@ -21,7 +28,6 @@ function processItems (sequentialItems) {
 }
 
 function processItem (item, startIndex, finished) {
-   console.log('processItem - ' + item);
    var currentIndex = startIndex;
    var command = item;
    var commands = [];
@@ -54,7 +60,17 @@ function processItem (item, startIndex, finished) {
 		        setTimeout(commandFinished, 1000);
             } else {
 		        var file = soundType.getFile(command);
-                playFunction(file, commandFinished);
+                console.log('playing - ' + file);
+
+                var soundContext = soundKeyToContextMap[command.toLowerCase()];
+                if (!soundContext) {
+                    soundContext = defaultContext;
+                }
+                if (!soundContext.volume) {
+                    soundContext.volume = 100;
+                }
+
+                playFunction(file, soundContext, commandFinished);
             }
     	}, 
 	function () {
@@ -62,13 +78,23 @@ function processItem (item, startIndex, finished) {
 	});
 }
 
+function range (percent, min, max) {
+    var scale = percent / 100;
+    var range = max - min;
+    return min + (scale * range);
+}
+
 var playerByOS = {
-    darwin: function (file, callback) {
-        exec('afplay \'' + file + '\'', callback);
-    },
-    linux:  function (file, callback) {
-        exec('mplayer \'' + file + '\'', callback);
-    }
+    darwin:
+        function (file, context, callback) {
+            var volume = range(context.volume, 0, 1);
+            console.log('Generic volume ' + context.volume + ' => ' + volume);
+            exec('afplay --volume ' + volume + ' \'' + file + '\'', callback);
+        },
+    linux:
+        function (file, context, callback) {
+            exec('mplayer \'' + file + '\'', callback);
+        }
 };
 
 playFunction = playerByOS[process.platform];
