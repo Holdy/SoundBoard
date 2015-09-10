@@ -5,6 +5,16 @@ function addIntermittent (soundKey, config) {
     channel(soundKey, config.min || 5, config.max || 20);
 }
 
+function addContinuous(soundKey) {
+    playAndRepeat(soundKey);
+}
+
+function playAndRepeat(soundKey) {
+    player.process(soundKey, function () {
+        playAndRepeat(soundKey);
+    });
+}
+
 function channel (soundName,min,max) {
     var minMS = min * 1000;
     var maxMS = max * 1000;
@@ -64,3 +74,4 @@ function playOnceForEachHour(soundKey, interval) {
 
 module.exports.addIntermittent = addIntermittent;
 module.exports.addTimed        = addTimed;
+module.exports.addContinuous   = addContinuous;

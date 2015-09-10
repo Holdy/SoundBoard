@@ -6,24 +6,28 @@ var playFunction;
 
 var defaultContext = {volume: 100};
 var soundKeyToContextMap =  {
-    Blackbird: {volume: 50},
-    1212: {volume:100}
+    blackbird: {volume: 50},
+    1212: {volume:100},
+    wind: {volume:10}
 
 };
 
 // Space + & all mean play at the same time.
 // 'wait' means wait 1 second. Comma = play after (eg 'intro,name,name-theme').
-function processCommands (command) {
+function processCommands (command, callback) {
     if (command) {
-        processItems(command.split(','), 0);
+        processItems(command.split(','), callback);
     }
 }
 
-function processItems (sequentialItems) {
+function processItems (sequentialItems, finished) {
 	async.eachSeries(sequentialItems,
             function (item, callback) {
                 processItem(item, 0, callback);
             }, function(err){
+                if (finished) {
+                    finished();
+                }
             });
 }
 
@@ -93,7 +97,9 @@ var playerByOS = {
         },
     linux:
         function (file, context, callback) {
-            exec('mplayer \'' + file + '\'', callback);
+            var volume = range(context.volume, 1, 100);
+            console.log('Generic volume ' + context.volume + ' => ' + volume);
+            exec('mplayer -softvol -volume ' + volume + ' \'' + file + '\'', callback);
         }
 };
 
