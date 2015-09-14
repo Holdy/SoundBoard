@@ -1,13 +1,14 @@
 const soundType = require('./SoundType.js');
 const fs = require('fs');
 
-function loadFiles (rootDirectory) {
+function loadFiles (info) {
+    var rootDirectory = info.source;
     var fileNames = fs.readdirSync(rootDirectory);
 	
     fileNames.forEach(function (item) {
 	if (endsWith(item, '.mp3') || endsWith(item,'.wav')) {
 		console.log('Found - ' + item); 
-		soundType.addFile(rootDirectory + item);       
+		soundType.addFile(rootDirectory + item, info);
 	}
     });
 }

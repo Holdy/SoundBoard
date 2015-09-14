@@ -52,3 +52,4 @@ function getFirstNumber(text) {
 */
 
 module.exports.start = start;
+module.exports.player = player;

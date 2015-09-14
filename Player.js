@@ -8,9 +8,13 @@ var defaultContext = {volume: 100};
 var soundKeyToContextMap =  {
     blackbird: {volume: 50},
     1212: {volume:100},
-    wind: {volume:10}
+    wind: {volume:10},
+    churchbell: {volume:10},
+    trainhorn: {volume:60}
 
 };
+
+var tagInfo = {};
 
 // Space + & all mean play at the same time.
 // 'wait' means wait 1 second. Comma = play after (eg 'intro,name,name-theme').
@@ -63,8 +67,7 @@ function processItem (item, startIndex, finished) {
 	        } else if (command === 'wait') {
 		        setTimeout(commandFinished, 1000);
             } else {
-		        var file = soundType.getFile(command);
-                console.log('playing - ' + file);
+		        var file = soundType.getFileInfo(command);
 
                 var soundContext = soundKeyToContextMap[command.toLowerCase()];
                 if (!soundContext) {
@@ -74,12 +77,53 @@ function processItem (item, startIndex, finished) {
                     soundContext.volume = 100;
                 }
 
-                playFunction(file, soundContext, commandFinished);
+                if (!file) {
+                    console.log('NO FILE for ' + command);
+                }
+                else if ( canPlay(file)) {
+                    processActions(file);
+                    console.log('playing - ' + file.filePath);
+                    playFunction(file.filePath, soundContext, commandFinished);
+                } else {
+                    console.log('skipping - ' + file.filePath);
+                    commandFinished();
+                }
             }
     	}, 
 	function () {
 	    finished();
 	});
+}
+
+function processActions(fileInfo) {
+    var tagInfo;
+    if (fileInfo.tags && fileInfo.tags.length > 0) {
+        fileInfo.tags.forEach(function (tag) {
+            tagInfo = getTag(tag);
+            tagInfo.playTriggers.forEach(function (item) {
+                processCommands(item);
+            })
+            tagInfo.silentTriggers.forEach(function (item) {
+                getTag(item.tag).silence (item.seconds);
+                                });
+        });
+    }
+}
+
+function canPlay(fileInfo) {
+    var result = true;
+    var now = Date.now();
+    var tagInfo;
+    if (fileInfo && fileInfo.tags && fileInfo.tags.length > 0) {
+        fileInfo.tags.forEach(function (tag) {
+            tagInfo = getTag(tag);
+            if (tagInfo.silentUntil && tagInfo.silentUntil > now) {
+                result = false;
+            }
+        });
+    }
+
+    return result;
 }
 
 function range (percent, min, max) {
@@ -109,4 +153,29 @@ if (!playFunction) {
     console.log('Player not defined for [' + process.platform + ']');
 }
 
+function getTag(tagName) {
+    var tagOwner = this;
+    var tag = tagInfo[tagName];
+    if (!tag) {
+        tag = {
+            playTriggers: [],
+            silentTriggers: [],
+            triggerPlay : function (command) { this.playTriggers.push(command); },
+            triggerSilent : function (tag ,seconds) {this.silentTriggers.push({'tag': tag, 'seconds': seconds});},
+            silence : function(seconds) {
+                var currentWait = this.silentUntil;
+                var suggested = Date.now() + (seconds * 1000);
+                if (currentWait) {
+                    this.silentUntil = Math.max(suggested,currentWait);
+                } else {
+                    this.silentUntil = suggested;
+                }
+            }
+        };
+        tagInfo[tagName] = tag;
+    }
+    return tag;
+}
+
 module.exports.process = processCommands;
+module.exports.getTag = getTag;
