@@ -7,7 +7,9 @@
     "url": ""
   },
   "dependencies": {
-    "express": "*"
+    "express": "*",
+    "async": "*",
+    "node-schedule": "*"
   },
   "devDependencies": {},
   "optionalDependencies": {},
