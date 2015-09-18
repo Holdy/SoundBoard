@@ -2,9 +2,9 @@ var server     = require('./Server.js');
 var background = require('./Background.js');
 var backgroundActive = true;
 
-server.start(1212, [{source:'/Users/chrisholden/Dropbox (Personal)/audio/fx/'},
-    {source:'/Users/chrisholden/Dropbox (Personal)/audio/intro/', tagAll:['intro']},
-    {source:'/Users/chrisholden/Dropbox (Personal)/audio/voice/', tagAll:['voice']}]);
+server.start(80, [{source:'../SoundBoardFX/'},
+    {source:'../SoundBoardIntro/', tagAll:['intro']},
+    {source:'../SoundBoardVoice/', tagAll:['voice']}]);
 
 server.player.getTag('loud').triggerPlay('wait,PidgeonFlyAway&PidgeonsFlyAway');
 server.player.getTag('loud').triggerSilent('bird',10);
