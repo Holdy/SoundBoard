@@ -8,7 +8,7 @@ var defaultContext = {volume: 100};
 var soundKeyToContextMap =  {
     blackbird: {volume: 50},
     1212: {volume:100},
-    wind: {volume:10},
+    wind: {volume:30},
     churchbell: {volume:10},
     trainhorn: {volume:60},
     woodpeckerpeck: {volume:40}
@@ -80,7 +80,7 @@ function processItem (item, startIndex, finished) {
                 if (!file) {
                     console.log('NO FILE for ' + command);
                 }
-                else if ( canPlay(file)) {
+                else if (canPlay(file)) {
                     processActions(file);
                     console.log('playing - ' + file.filePath);
                     playFunction(file.filePath, soundContext, commandFinished);
