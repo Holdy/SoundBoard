@@ -23,11 +23,14 @@ if (backgroundActive) {
     background.addContinuous('Wind');
 
     // Played with a gap of between min and max seconds.
-    background.addIntermittent('Chaffinch',      {min: 7,  max: 15});
-    background.addIntermittent('Blackbird',      {min: 7,  max: 15});
-    background.addIntermittent('Blackbird',      {min: 7,  max: 15});
-    background.addIntermittent('WoodpeckerPeck', {min: 40, max: 300});
-    background.addIntermittent('SongSparrow',    {min: 10, max: 300});
+    background.addIntermittent('Chaffinch',      {min:   7, max:  15});
+    background.addIntermittent('Blackbird',      {min:   7, max:  15});
+    background.addIntermittent('Blackbird',      {min:  15, max:  30});
+    
+    background.addIntermittent('Magpie',         {min: 120, max: 200});
+    background.addIntermittent('Greenfinch',     {min:  60, max: 200});
+    background.addIntermittent('WoodpeckerPeck', {min:  40, max: 300});
+    background.addIntermittent('SongSparrow',    {min:  10, max: 300});
 
     //  Annoying:
     //  background.addIntermittent('WoodWarbler', {min: 20, max: 50});

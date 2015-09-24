@@ -11,7 +11,8 @@ var soundKeyToContextMap =  {
     wind: {volume:30},
     churchbell: {volume:10},
     trainhorn: {volume:60},
-    woodpeckerpeck: {volume:40}
+    woodpeckerpeck: {volume:40},
+    magpie: {volume:70}
 };
 
 var tagInfo = {};
