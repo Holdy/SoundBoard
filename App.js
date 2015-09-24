@@ -26,7 +26,7 @@ if (backgroundActive) {
     background.addIntermittent('Chaffinch',      {min:   7, max:  15});
     background.addIntermittent('Blackbird',      {min:   7, max:  15});
     background.addIntermittent('Blackbird',      {min:  15, max:  30});
-    
+
     background.addIntermittent('Magpie',         {min: 120, max: 200});
     background.addIntermittent('Greenfinch',     {min:  60, max: 200});
     background.addIntermittent('WoodpeckerPeck', {min:  40, max: 300});
