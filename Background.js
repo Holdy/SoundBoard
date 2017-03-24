@@ -39,6 +39,9 @@ function randomBetweenOneAnd(x) {
 function addTimed (soundKey, config) {
     var rule = new schedule.RecurrenceRule();
     rule.minute = config.minute;
+    rule.dayOfWeek = [1,2,3,4,5];
+    rule.hour = [9,10,11,12,13,14,15,16,17,18];
+
     var j = schedule.scheduleJob(rule, function(){
         if ( config.clock ) {
             playOnceForEachHour(soundKey, config.interval);
